@@ -1,0 +1,23 @@
+[package]
+name = "finance-manager"
+version = "1.0.0"
+description = "财务管理系统"
+authors = [""]
+license = ""
+repository = ""
+edition = "2021"
+
+[build-dependencies]
+tauri-build = { version = "2.0.0", features = [] }
+
+[dependencies]
+tauri = { version = "2.0.0", features = [] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+chrono = { version = "0.4", features = ["serde"] }
+walkdir = "2.4"
+zip = { version = "2.0", default-features = false, features = ["deflate"] }
+
+[features]
+default = ["custom-protocol"]
+custom-protocol = ["tauri/custom-protocol"]

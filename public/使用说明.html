@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>日常办公网页系统 - 使用说明</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background: #f5f5f5;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    header {
+      background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 100%);
+      color: white;
+      padding: 40px 20px;
+      text-align: center;
+      border-radius: 12px;
+      margin-bottom: 30px;
+    }
+    header h1 { font-size: 2.5em; margin-bottom: 10px; }
+    header p { opacity: 0.9; font-size: 1.1em; }
+    .version {
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.9em;
+      margin-top: 10px;
+    }
+    .section {
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .section h2 {
+      color: #1e3a5f;
+      font-size: 1.5em;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #e8e8e8;
+    }
+    .section h3 {
+      color: #2d5a87;
+      font-size: 1.2em;
+      margin: 25px 0 15px;
+    }
+    .section h4 {
+      color: #444;
+      font-size: 1em;
+      margin: 20px 0 10px;
+    }
+    p { margin-bottom: 12px; }
+    ul, ol { margin-left: 25px; margin-bottom: 15px; }
+    li { margin-bottom: 8px; }
+    .highlight {
+      background: #fff3cd;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+    .code {
+      background: #f4f4f4;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9em;
+    }
+    .kbd {
+      background: #333;
+      color: white;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.85em;
+    }
+    .tip {
+      background: #e8f4fd;
+      border-left: 4px solid #3b82f6;
+      padding: 15px 20px;
+      margin: 15px 0;
+      border-radius: 0 8px 8px 0;
+    }
+    .tip::before {
+      content: '💡 ';
+      font-weight: bold;
+    }
+    .warning {
+      background: #fff3cd;
+      border-left: 4px solid #f59e0b;
+      padding: 15px 20px;
+      margin: 15px 0;
+      border-radius: 0 8px 8px 0;
+    }
+    .warning::before {
+      content: '⚠️ ';
+      font-weight: bold;
+    }
+    .danger {
+      background: #fee2e2;
+      border-left: 4px solid #ef4444;
+      padding: 15px 20px;
+      margin: 15px 0;
+      border-radius: 0 8px 8px 0;
+    }
+    .danger::before {
+      content: '🚨 ';
+      font-weight: bold;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 15px 0;
+    }
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #e8e8e8;
+    }
+    th {
+      background: #f8f9fa;
+      font-weight: 600;
+      color: #1e3a5f;
+    }
+    tr:hover { background: #f8f9fa; }
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 15px;
+      margin: 20px 0;
+    }
+    .feature-card {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+      border: 1px solid #e8e8e8;
+    }
+    .feature-card h4 {
+      margin-top: 0;
+      color: #1e3a5f;
+    }
+    .step {
+      display: flex;
+      gap: 15px;
+      margin: 15px 0;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 8px;
+    }
+    .step-num {
+      width: 30px;
+      height: 30px;
+      background: #1e3a5f;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+    .step-content { flex: 1; }
+    .step-content h4 { margin-top: 0; }
+    .toc {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    .toc h3 { margin-top: 0; }
+    .toc ul { list-style: none; margin-left: 0; }
+    .toc li { margin-bottom: 5px; }
+    .toc a {
+      color: #2d5a87;
+      text-decoration: none;
+    }
+    .toc a:hover { text-decoration: underline; }
+    footer {
+      text-align: center;
+      padding: 30px;
+      color: #666;
+      font-size: 0.9em;
+    }
+    @media print {
+      body { background: white; }
+      .section { box-shadow: none; border: 1px solid #ddd; }
+      header { background: #1e3a5f !important; -webkit-print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>📋 日常办公网页系统</h1>
+      <p>面向银行信贷场景的纯离线本地办公系统</p>
+      <span class="version">版本 v4.3</span>
+    </header>
+
+    <div class="toc">
+      <h3>📑 目录</h3>
+      <ul>
+        <li><a href="#overview">一、系统概述</a></li>
+        <li><a href="#login">二、登录与账户</a></li>
+        <li><a href="#interface">三、界面介绍</a></li>
+        <li><a href="#dashboard">四、工作台</a></li>
+        <li><a href="#notebook">五、工作记事本</a></li>
+        <li><a href="#todo">六、待办清单</a></li>
+        <li><a href="#customer">七、客户档案</a></li>
+        <li><a href="#calculator">八、房贷计算器</a></li>
+        <li><a href="#tools">九、办公工具箱</a></li>
+        <li><a href="#analytics">十、数据分析</a></li>
+        <li><a href="#annual">十一、年度报表</a></li>
+        <li><a href="#settings">十二、系统设置</a></li>
+        <li><a href="#shortcuts">十三、快捷键</a></li>
+        <li><a href="#backup">十四、数据备份</a></li>
+        <li><a href="#faq">十五、常见问题</a></li>
+      </ul>
+    </div>
+
+    <div class="section" id="overview">
+      <h2>一、系统概述</h2>
+      <p>日常办公网页系统是一款专为银行信贷场景设计的<strong>纯离线本地办公系统</strong>。所有数据存储在浏览器本地，无需服务器，无需网络，保护您的数据隐私。</p>
+      
+      <h3>核心功能</h3>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <h4>📝 工作记事本</h4>
+          <p>富文本编辑、二级分类、智能标签推荐</p>
+        </div>
+        <div class="feature-card">
+          <h4>✓ 待办清单</h4>
+          <p>列表/看板视图、循环待办、超期提醒</p>
+        </div>
+        <div class="feature-card">
+          <h4>👤 客户档案</h4>
+          <p>客户管理、合同信息、跟进记录</p>
+        </div>
+        <div class="feature-card">
+          <h4>🧮 房贷计算器</h4>
+          <p>5种还款方式、多方案对比</p>
+        </div>
+        <div class="feature-card">
+          <h4>📊 数据分析</h4>
+          <p>多维度图表、客户画像、效率趋势</p>
+        </div>
+        <div class="feature-card">
+          <h4>📈 年度报表</h4>
+          <p>自动生成、一键导出Excel</p>
+        </div>
+      </div>
+
+      <h3>系统特点</h3>
+      <ul>
+        <li><strong>纯离线运行</strong> - 所有数据存储在浏览器IndexedDB</li>
+        <li><strong>数据安全</strong> - 密码保护、超时锁定、自动备份</li>
+        <li><strong>智能自动化</strong> - 自动保存、智能标签、待办生成</li>
+        <li><strong>个性化定制</strong> - 5种主题、3种布局、自定义首页</li>
+        <li><strong>效率工具</strong> - 记事模板、批量导入、桌面提醒</li>
+      </ul>
+    </div>
+
+    <div class="section" id="login">
+      <h2>二、登录与账户</h2>
+      
+      <h3>首次登录</h3>
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h4>输入默认密码</h4>
+          <p>系统首次打开时，输入默认密码 <span class="code">aa112233</span></p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h4>修改密码</h4>
+          <p>首次登录后系统会强制要求修改密码，新密码至少需要6位</p>
+        </div>
+      </div>
+
+      <h3>修改密码</h3>
+      <p>登录后可通过以下路径修改密码：</p>
+      <p><strong>系统设置 → 常规 → 安全设置 → 修改密码</strong></p>
+
+      <div class="warning">
+        <strong>重要提示：</strong>请牢记您的密码，系统无法找回密码。如果忘记密码，需要清除浏览器数据重新初始化。
+      </div>
+    </div>
+
+    <div class="section" id="interface">
+      <h2>三、界面介绍</h2>
+      
+      <h3>界面布局</h3>
+      <table>
+        <tr>
+          <th>区域</th>
+          <th>说明</th>
+        </tr>
+        <tr>
+          <td>顶部导航栏</td>
+          <td>系统名称、快速搜索、通知按钮</td>
+        </tr>
+        <tr>
+          <td>左侧菜单</td>
+          <td>各功能模块入口（按使用频率自动排序）</td>
+        </tr>
+        <tr>
+          <td>标签栏</td>
+          <td>已打开的标签页，支持多标签切换</td>
+        </tr>
+        <tr>
+          <td>内容区域</td>
+          <td>当前选中标签的内容展示</td>
+        </tr>
+        <tr>
+          <td>底部状态栏</td>
+          <td>当前页面、快捷键提示、主题、时间</td>
+        </tr>
+      </table>
+
+      <h3>标签页操作</h3>
+      <ul>
+        <li><strong>新建标签</strong> - 点击标签栏右侧的 + 按钮</li>
+        <li><strong>切换标签</strong> - 点击标签或使用 <span class="kbd">Ctrl+Tab</span></li>
+        <li><strong>关闭标签</strong> - 点击标签上的 × 或使用 <span class="kbd">Ctrl+W</span></li>
+        <li><strong>恢复关闭</strong> - 使用 <span class="kbd">Ctrl+Shift+T</span>（5秒内有效）</li>
+        <li><strong>固定标签</strong> - 右键标签选择"固定标签"</li>
+      </ul>
+
+      <div class="tip">
+        标签数量上限为10个（固定标签+普通标签），超出后需要关闭部分标签才能新建。
+      </div>
+    </div>
+
+    <div class="section" id="dashboard">
+      <h2>四、工作台</h2>
+      
+      <h3>统计卡片</h3>
+      <p>工作台显示8种统计指标，可自定义显示其中6个：</p>
+      <ul>
+        <li>今日待办 - 今日到期的待办事项数量</li>
+        <li>本周到期贷款 - 本周内到期的合同数量</li>
+        <li>本月新增客户 - 本月新增的客户数量</li>
+        <li>进行中记事 - 状态为"进行中"的记事数量</li>
+        <li>客户总数 - 系统中所有客户数量</li>
+        <li>合同总数 - 系统中所有合同数量</li>
+        <li>超期待办 - 已过期的待办事项数量</li>
+        <li>已完成记事 - 状态为"已完成"的记事数量</li>
+      </ul>
+
+      <h3>快捷操作</h3>
+      <p>显示4个常用功能的快捷入口，点击次数越多排序越靠前。</p>
+
+      <h3>最近动态</h3>
+      <p>显示最近更新的客户、记事、待办，支持快捷操作。</p>
+
+      <h3>自定义显示</h3>
+      <p>点击"自定义显示"按钮，可选择要显示的统计卡片（最多6个）。</p>
+    </div>
+
+    <div class="section" id="notebook">
+      <h2>五、工作记事本</h2>
+      
+      <h3>创建记事</h3>
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h4>新建记事</h4>
+          <p>点击"新建记事"按钮或从模板创建</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h4>编辑内容</h4>
+          <p>使用富文本编辑器编辑内容，支持标题、列表、表格等</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h4>设置分类</h4>
+          <p>选择一级分类和二级分类</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <h4>保存</h4>
+          <p>系统自动保存（3秒延迟），也可手动点击保存</p>
+        </div>
+      </div>
+
+      <h3>智能功能</h3>
+      <table>
+        <tr>
+          <th>功能</th>
+          <th>说明</th>
+        </tr>
+        <tr>
+          <td>自动保存</td>
+          <td>停止输入3秒后自动保存，显示"已保存"状态</td>
+        </tr>
+        <tr>
+          <td>智能标签</td>
+          <td>根据内容自动推荐标签，点击即可添加</td>
+        </tr>
+        <tr>
+          <td>智能分析</td>
+          <td>点击"智能分析"识别内容中的待办事项</td>
+        </tr>
+      </table>
+
+      <h3>记事模板</h3>
+      <p>系统内置以下模板，也可在设置中自定义：</p>
+      <ul>
+        <li><strong>周例会记录</strong> - 会议模板，含参会人员、会议内容、待办事项</li>
+        <li><strong>客户跟进</strong> - 跟进模板，含客户信息、沟通内容、下一步计划</li>
+        <li><strong>信贷审批</strong> - 审批模板，含申请人信息、贷款金额、审批意见</li>
+      </ul>
+
+      <h3>分类说明</h3>
+      <table>
+        <tr>
+          <th>一级分类</th>
+          <th>二级分类（可自定义）</th>
+        </tr>
+        <tr>
+          <td>业务</td>
+          <td>信贷审批、贷后管理、客户跟进、其他业务</td>
+        </tr>
+        <tr>
+          <td>行政</td>
+          <td>内部会议、培训学习、制度文件、其他行政</td>
+        </tr>
+        <tr>
+          <td>会议</td>
+          <td>周例会、月度会议、专题会议、其他会议</td>
+        </tr>
+        <tr>
+          <td>其他</td>
+          <td>未分类</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="section" id="todo">
+      <h2>六、待办清单</h2>
+      
+      <h3>创建待办</h3>
+      <ol>
+        <li>点击"新建待办"按钮</li>
+        <li>输入待办标题（必填）</li>
+        <li>选择状态、优先级</li>
+        <li>设置截止日期</li>
+        <li>可选择关联客户/记事</li>
+        <li>设置循环（可选）</li>
+        <li>点击保存</li>
+      </ol>
+
+      <h3>循环待办</h3>
+      <p>支持设置循环待办，系统会自动生成未来实例：</p>
+      <ul>
+        <li><strong>每周循环</strong> - 每周同一天生成新待办</li>
+        <li><strong>每月循环</strong> - 每月同一天生成新待办</li>
+        <li><strong>结束日期</strong> - 设置循环的截止日期，最多生成10个实例</li>
+      </ul>
+
+      <h3>视图模式</h3>
+      <table>
+        <tr>
+          <th>模式</th>
+          <th>说明</th>
+          <th>适用场景</th>
+        </tr>
+        <tr>
+          <td>列表视图</td>
+          <td>详细列表，显示完整信息</td>
+          <td>日常管理</td>
+        </tr>
+        <tr>
+          <td>看板视图</td>
+          <td>拖拽式看板，按状态分栏</td>
+          <td>项目管理（数据≤50时可用）</td>
+        </tr>
+      </table>
+
+      <h3>超期提醒</h3>
+      <p>超期待办会自动置顶并显示"超期X天"标记。</p>
+
+      <h3>快捷操作</h3>
+      <ul>
+        <li>点击复选框快速完成待办</li>
+        <li>点击"延期1天"自动推迟截止日期</li>
+      </ul>
+    </div>
+
+    <div class="section" id="customer">
+      <h2>七、客户档案</h2>
+      
+      <h3>客户信息</h3>
+      <table>
+        <tr>
+          <th>字段</th>
+          <th>说明</th>
+        </tr>
+        <tr>
+          <td>客户编号</td>
+          <td>系统自动生成，唯一标识</td>
+        </tr>
+        <tr>
+          <td>客户类型</td>
+          <td>个人/企业</td>
+        </tr>
+        <tr>
+          <td>客户名称</td>
+          <td>必填</td>
+        </tr>
+        <tr>
+          <td>联系电话</td>
+          <td>列表页脱敏显示</td>
+        </tr>
+        <tr>
+          <td>身份证后4位</td>
+          <td>用于去重识别</td>
+        </tr>
+        <tr>
+          <td>标签</td>
+          <td>自定义标签，最多10个</td>
+        </tr>
+      </table>
+
+      <h3>合同信息</h3>
+      <table>
+        <tr>
+          <th>字段</th>
+          <th>说明</th>
+        </tr>
+        <tr>
+          <td>合同编号</td>
+          <td>系统自动生成</td>
+        </tr>
+        <tr>
+          <td>贷款金额</td>
+          <td>单位：元</td>
+        </tr>
+        <tr>
+          <td>期限</td>
+          <td>单位：月</td>
+        </tr>
+        <tr>
+          <td>五级分类</td>
+          <td>正常/关注/次级/可疑/损失</td>
+        </tr>
+        <tr>
+          <td>状态</td>
+          <td>正常/诉讼/执行</td>
+        </tr>
+        <tr>
+          <td>到期日期</td>
+          <td>用于到期提醒</td>
+        </tr>
+      </table>
+
+      <h3>跟进记录</h3>
+      <ol>
+        <li>在客户详情页点击"新建跟进"</li>
+        <li>选择跟进方式（电话/拜访/短信/其他）</li>
+        <li>填写跟进内容</li>
+        <li>设置下次跟进时间（可选）</li>
+        <li>保存后自动生成待办提醒</li>
+      </ol>
+
+      <h3>合同到期提醒</h3>
+      <p>系统会在合同到期前自动提醒：</p>
+      <ul>
+        <li>提前7天 - 浏览器桌面通知</li>
+        <li>提前3天 - 浏览器桌面通知</li>
+        <li>提前1天 - 浏览器桌面通知</li>
+      </ul>
+      <div class="tip">
+        首次使用时需要授权浏览器通知权限。
+      </div>
+
+      <h3>批量导入</h3>
+      <p>支持从Excel批量导入客户：</p>
+      <ol>
+        <li>准备Excel文件，包含：客户名称、联系电话、身份证后4位等字段</li>
+        <li>在客户档案页面点击"导入"</li>
+        <li>选择Excel文件</li>
+        <li>系统自动去重（身份证后4位+姓名）</li>
+      </ol>
+    </div>
+
+    <div class="section" id="calculator">
+      <h2>八、房贷计算器</h2>
+      
+      <h3>还款方式</h3>
+      <table>
+        <tr>
+          <th>方式</th>
+          <th>说明</th>
+        </tr>
+        <tr>
+          <td>等额本息</td>
+          <td>每月还款额固定，前期利息多本金少</td>
+        </tr>
+        <tr>
+          <td>等额本金</td>
+          <td>每月本金固定，利息逐月递减</td>
+        </tr>
+        <tr>
+          <td>按月付息到期还本</td>
+          <td>每月只还利息，到期一次性还本</td>
+        </tr>
+        <tr>
+          <td>N月还本</td>
+          <td>自定义还本周期</td>
+        </tr>
+        <tr>
+          <td>灵活还本</td>
+          <td>自定义每期还款额</td>
+        </tr>
+      </table>
+
+      <h3>多方案对比</h3>
+      <ol>
+        <li>点击"多方案对比"按钮</li>
+        <li>添加最多3个方案</li>
+        <li>设置各方案的金额、期限、利率、还款方式</li>
+        <li>系统自动生成对比表格</li>
+      </ol>
+
+      <h3>提前还款测算</h3>
+      <ol>
+        <li>勾选"提前还款测算"</li>
+        <li>输入提前还款金额</li>
+        <li>选择提前还款期数</li>
+        <li>查看节省利息</li>
+      </ol>
+
+      <h3>导出功能</h3>
+      <p>支持导出还款计划表为Excel格式。</p>
+    </div>
+
+    <div class="section" id="tools">
+      <h2>九、办公工具箱</h2>
+      
+      <h3>PDF工具</h3>
+      <table>
+        <tr>
+          <th>功能</th>
+          <th>说明</th>
+        </tr>
+        <tr>
+          <td>PDF合并</td>
+          <td>将多个PDF文件合并为一个</td>
+        </tr>
+        <tr>
+          <td>PDF拆分</td>
+          <td>使用浏览器打印功能选择页面范围</td>
+        </tr>
+        <tr>
+          <td>PDF压缩</td>
+          <td>使用浏览器另存为PDF优化文件大小</td>
+        </tr>
+      </table>
+
+      <h3>图片工具</h3>
+      <table>
+        <tr>
+          <th>功能</th>
+          <th>说明</th>
+        </tr>
+        <tr>
+          <td>图片压缩</td>
+          <td>压缩图片文件大小，支持预览</td>
+        </tr>
+        <tr>
+          <td>图片裁剪</td>
+          <td>建议使用系统自带图片编辑器</td>
+        </tr>
+      </table>
+
+      <h3>人民币大写转换</h3>
+      <p>输入数字金额，自动转换为银行规范大写金额。</p>
+      <div class="tip">
+        示例：输入 123456.78 → 输出 壹拾贰万叁仟肆佰伍拾陆元柒角捌分
+      </div>
+
+      <h3>日期计算器</h3>
+      <table>
+        <tr>
+          <th>功能</th>
+          <th>说明</th>
+        </tr>
+        <tr>
+          <td>工作日计算</td>
+          <td>计算两个日期之间的工作日天数</td>
+        </tr>
+        <tr>
+          <td>日期推算</td>
+          <td>从指定日期添加N个工作日后推算结果日期</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="section" id="analytics">
+      <h2>十、数据分析</h2>
+      
+      <h3>待办分析</h3>
+      <ul>
+        <li><strong>状态分布</strong> - 饼图展示各状态待办占比</li>
+        <li><strong>完成率趋势</strong> - 折线图展示完成率变化</li>
+        <li><strong>超期统计</strong> - 超期待办数量</li>
+      </ul>
+
+      <h3>客户画像</h3>
+      <ul>
+        <li><strong>类型分布</strong> - 个人/企业客户占比</li>
+        <li><strong>五级分类分布</strong> - 正常/关注/次级/可疑/损失</li>
+        <li><strong>贷款金额分布</strong> - 各金额区间合同数量</li>
+        <li><strong>雷达图</strong> - 多维度业务指标可视化</li>
+      </ul>
+
+      <h3>记事分析</h3>
+      <ul>
+        <li><strong>分类统计</strong> - 业务/行政/会议/其他占比</li>
+        <li><strong>完成趋势</strong> - 记事完成数量变化</li>
+      </ul>
+
+      <h3>效率趋势</h3>
+      <ul>
+        <li><strong>待办完成率</strong> - 整体完成率百分比</li>
+        <li><strong>超期率</strong> - 超期待办占比</li>
+        <li><strong>工作量趋势</strong> - 每周工作量与完成率</li>
+      </ul>
+
+      <h3>数据范围</h3>
+      <p>可选择分析的时间范围：</p>
+      <ul>
+        <li>近3个月</li>
+        <li>近1年</li>
+        <li>全部</li>
+      </ul>
+    </div>
+
+    <div class="section" id="annual">
+      <h2>十一、年度报表</h2>
+      
+      <h3>生成报表</h3>
+      <ol>
+        <li>在侧边栏点击"年度报表"</li>
+        <li>选择年份（默认当前年份）</li>
+        <li>点击"生成报表"按钮</li>
+      </ol>
+
+      <h3>报表内容</h3>
+      <table>
+        <tr>
+          <th>指标</th>
+          <th>说明</th>
+        </tr>
+        <tr>
+          <td>新增客户</td>
+          <td>年度新增客户总数</td>
+        </tr>
+        <tr>
+          <td>新增合同</td>
+          <td>年度新增合同总数</td>
+        </tr>
+        <tr>
+          <td>贷款总额</td>
+          <td>年度放款总金额</td>
+        </tr>
+        <tr>
+          <td>完成待办</td>
+          <td>年度完成待办数量</td>
+        </tr>
+        <tr>
+          <td>新建记事</td>
+          <td>年度新建记事数量</td>
+        </tr>
+      </table>
+
+      <h3>图表展示</h3>
+      <ul>
+        <li><strong>月度数据趋势</strong> - 折线图展示每月新增客户、合同、待办、记事</li>
+        <li><strong>五级分类分布</strong> - 饼图展示合同五级分类占比</li>
+        <li><strong>顶级客户</strong> - 柱状图展示贷款金额前5名客户</li>
+      </ul>
+
+      <h3>导出报表</h3>
+      <p>点击"导出Excel"按钮，可将完整报表导出为Excel文件。</p>
+    </div>
+
+    <div class="section" id="settings">
+      <h2>十二、系统设置</h2>
+      
+      <h3>外观设置</h3>
+      <table>
+        <tr>
+          <th>设置项</th>
+          <th>说明</th>
+        </tr>
+        <tr>
+          <td>自动切换主题</td>
+          <td>白天(6-18点)自动浅色，晚上自动深色</td>
+        </tr>
+        <tr>
+          <td>主题选择</td>
+          <td>深蓝/浅色/森林绿/紫罗兰/暖橙</td>
+        </tr>
+        <tr>
+          <td>布局选择</td>
+          <td>默认/紧凑/宽屏</td>
+        </tr>
+      </table>
+
+      <h3>常规设置</h3>
+      <table>
+        <tr>
+          <th>设置项</th>
+          <th>说明</th>
+        </tr>
+        <tr>
+          <td>快捷操作</td>
+          <td>选择4个快捷按钮显示在首页</td>
+        </tr>
+        <tr>
+          <td>自动锁定时间</td>
+          <td>无操作后自动锁定（5/10/15/30/60分钟）</td>
+        </tr>
+        <tr>
+          <td>修改密码</td>
+          <td>修改登录密码</td>
+        </tr>
+      </table>
+
+      <h3>分类管理</h3>
+      <p>管理记事的一级分类和二级分类：</p>
+      <ul>
+        <li>一级分类固定：业务、行政、会议、其他</li>
+        <li>二级分类可自定义，每类最多10个</li>
+        <li>点击分类旁的 × 删除</li>
+        <li>在输入框按回车添加新分类</li>
+      </ul>
+
+      <h3>模板管理</h3>
+      <p>管理记事模板：</p>
+      <ul>
+        <li>点击"添加模板"创建新模板</li>
+        <li>设置模板名称、分类、内容</li>
+        <li>点击"删除"移除模板</li>
+      </ul>
+
+      <h3>数据管理</h3>
+      <table>
+        <tr>
+          <th>功能</th>
+          <th>说明</th>
+        </tr>
+        <tr>
+          <td>退出时自动备份</td>
+          <td>关闭页面时自动下载JSON备份</td>
+        </tr>
+        <tr>
+          <td>导出JSON</td>
+          <td>完整数据备份</td>
+        </tr>
+        <tr>
+          <td>导出Excel</td>
+          <td>客户清单导出</td>
+        </tr>
+        <tr>
+          <td>导入数据</td>
+          <td>从JSON文件恢复数据（覆盖现有数据）</td>
+        </tr>
+        <tr>
+          <td>清理已删除数据</td>
+          <td>清理7天前已软删除的数据</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="section" id="shortcuts">
+      <h2>十三、快捷键</h2>
+      
+      <h3>全局快捷键</h3>
+      <table>
+        <tr>
+          <th>快捷键</th>
+          <th>功能</th>
+        </tr>
+        <tr>
+          <td><span class="kbd">Ctrl</span> + <span class="kbd">F</span></td>
+          <td>打开全局搜索</td>
+        </tr>
+        <tr>
+          <td><span class="kbd">Ctrl</span> + <span class="kbd">/</span></td>
+          <td>打开全局搜索（备用）</td>
+        </tr>
+        <tr>
+          <td><span class="kbd">Ctrl</span> + <span class="kbd">Tab</span></td>
+          <td>切换到下一个标签</td>
+        </tr>
+        <tr>
+          <td><span class="kbd">Ctrl</span> + <span class="kbd">Shift</span> + <span class="kbd">Tab</span></td>
+          <td>切换到上一个标签</td>
+        </tr>
+        <tr>
+          <td><span class="kbd">Ctrl</span> + <span class="kbd">W</span></td>
+          <td>关闭当前标签</td>
+        </tr>
+        <tr>
+          <td><span class="kbd">Ctrl</span> + <span class="kbd">Shift</span> + <span class="kbd">T</span></td>
+          <td>恢复刚关闭的标签（5秒内）</td>
+        </tr>
+        <tr>
+          <td><span class="kbd">Esc</span></td>
+          <td>关闭弹窗</td>
+        </tr>
+      </table>
+
+      <h3>记事快捷键</h3>
+      <table>
+        <tr>
+          <th>快捷键</th>
+          <th>功能</th>
+        </tr>
+        <tr>
+          <td><span class="kbd">Ctrl</span> + <span class="kbd">N</span></td>
+          <td>新建记事（首次使用会提示）</td>
+        </tr>
+        <tr>
+          <td><span class="kbd">Ctrl</span> + <span class="kbd">S</span></td>
+          <td>保存当前记事</td>
+        </tr>
+        <tr>
+          <td><span class="kbd">Ctrl</span> + <span class="kbd">B</span></td>
+          <td>加粗（编辑器内）</td>
+        </tr>
+        <tr>
+          <td><span class="kbd">Ctrl</span> + <span class="kbd">I</span></td>
+          <td>斜体（编辑器内）</td>
+        </tr>
+      </table>
+
+      <h3>待办快捷键</h3>
+      <table>
+        <tr>
+          <th>快捷键</th>
+          <th>功能</th>
+        </tr>
+        <tr>
+          <td><span class="kbd">Ctrl</span> + <span class="kbd">Shift</span> + <span class="kbd">N</span></td>
+          <td>新建待办</td>
+        </tr>
+      </table>
+
+      <h3>客户快捷键</h3>
+      <table>
+        <tr>
+          <th>快捷键</th>
+          <th>功能</th>
+        </tr>
+        <tr>
+          <td><span class="kbd">Ctrl</span> + <span class="kbd">Shift</span> + <span class="kbd">C</span></td>
+          <td>新建客户</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="section" id="backup">
+      <h2>十四、数据备份</h2>
+      
+      <h3>自动备份</h3>
+      <p>开启"退出时自动备份"后，每次关闭页面系统会自动下载JSON格式的备份文件到下载文件夹。</p>
+
+      <h3>手动备份</h3>
+      <ol>
+        <li>进入<strong>系统设置 → 数据管理</strong></li>
+        <li>点击"导出JSON（完整备份）"</li>
+        <li>选择保存位置</li>
+      </ol>
+
+      <h3>数据恢复</h3>
+      <div class="danger">
+        <strong>警告：</strong>导入数据将覆盖现有所有数据，请务必先备份当前数据！
+      </div>
+      <ol>
+        <li>进入<strong>系统设置 → 数据管理</strong></li>
+        <li>点击"选择文件"按钮</li>
+        <li>选择之前导出的JSON备份文件</li>
+        <li>确认导入（会显示数据预览）</li>
+      </ol>
+
+      <h3>备份建议</h3>
+      <ul>
+        <li>建议每周至少备份一次</li>
+        <li>重要操作前（如批量导入）先备份</li>
+        <li>将备份文件保存到云盘（OneDrive/坚果云等）</li>
+        <li>保留最近3-5个版本的备份</li>
+      </ul>
+    </div>
+
+    <div class="section" id="faq">
+      <h2>十五、常见问题</h2>
+      
+      <h3>Q1: 忘记密码怎么办？</h3>
+      <p>系统无法找回密码。如果忘记密码，需要清除浏览器数据重新初始化。建议定期导出备份以防数据丢失。</p>
+
+      <h3>Q2: 数据存储在哪里？</h3>
+      <p>所有数据存储在浏览器的IndexedDB中，属于本地存储。清除浏览器数据会导致数据丢失，请务必定期备份。</p>
+
+      <h3>Q3: 如何在多台电脑间同步数据？</h3>
+      <p>目前不支持自动同步。需要手动导出备份文件，通过U盘/云盘等方式传输到其他电脑，然后导入。</p>
+
+      <h3>Q4: 合同到期提醒不生效？</h3>
+      <p>请检查：</p>
+      <ul>
+        <li>浏览器是否允许通知权限</li>
+        <li>合同状态是否为"正常"</li>
+        <li>到期日期是否设置正确</li>
+      </ul>
+
+      <h3>Q5: 自动保存失败？</h3>
+      <p>请检查浏览器存储空间是否已满。可在浏览器设置中清理缓存，或导出数据后重新导入。</p>
+
+      <h3>Q6: 如何删除测试数据？</h3>
+      <p>删除数据后，系统会保留7天（软删除），之后自动清理。如需立即清理，可在<strong>系统设置 → 数据管理 → 清理已删除数据</strong>中手动清理。</p>
+
+      <h3>Q7: 主题切换不生效？</h3>
+      <p>请检查是否开启了"自动切换主题"，开启后会根据时间自动切换，手动选择将无效。</p>
+
+      <h3>Q8: 如何添加自定义记事模板？</h3>
+      <p>进入<strong>系统设置 → 模板</strong>，点击"添加模板"，填写名称、选择分类、输入内容后保存。</p>
+
+      <h3>Q9: 看板视图无法使用？</h3>
+      <p>当待办数量超过50条时，看板视图会自动禁用以保证性能。请使用列表视图或归档部分待办。</p>
+
+      <h3>Q10: 如何反馈问题或建议？</h3>
+      <p>本系统为离线本地系统，无服务器端。如有问题请联系系统管理员或开发人员。</p>
+    </div>
+
+    <footer>
+      <p>日常办公网页系统 v4.3</p>
+      <p>纯离线本地办公系统 · 数据本地存储</p>
+      <p style="margin-top: 10px; color: #999;">© 2026 版权所有</p>
+    </footer>
+  </div>
+</body>
+</html>
