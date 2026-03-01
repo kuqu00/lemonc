@@ -23,7 +23,7 @@ jobs:
         run: npm ci
 
       - name: Build frontend
-        run: npm run build
+        run: npx vite build
 
       - name: Install Tauri CLI
         run: cargo install tauri-cli --locked
@@ -58,7 +58,7 @@ jobs:
         run: npm ci
 
       - name: Build frontend
-        run: npm run build
+        run: npx vite build
 
       - name: Install Tauri CLI
         run: cargo install tauri-cli --locked
