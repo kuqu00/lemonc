@@ -1,13 +1,16 @@
 import { useEffect, useState } from 'react';
-import { 
-  Settings as SettingsIcon, 
-  Palette, 
-  Layout, 
+import {
+  Settings as SettingsIcon,
+  Palette,
+  Layout,
   Save,
   Monitor,
   CheckCircle2,
   Shield,
-  Lock
+  Lock,
+  FileSpreadsheet,
+  Download,
+  Upload
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -24,6 +27,8 @@ import { DataManager } from './DataManager';
 import { DesktopDataManager } from './DesktopDataManager';
 import { isElectron } from '@/lib/localDataStore';
 import { format } from 'date-fns';
+import { exportToExcel, importCustomersFromExcel, downloadCustomerTemplate } from '@/utils/excel';
+import { getHotkeyList } from '@/hooks/useHotkeys';
 
 const themes: { value: ThemeType; label: string; color: string }[] = [
   { value: 'light', label: '浅色主题', color: 'bg-gray-100' },
@@ -43,21 +48,22 @@ export function Settings() {
   const [activeTab, setActiveTab] = useState('appearance');
   const [isSaving, setIsSaving] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
-  
+  const [isLoading, setIsLoading] = useState(false);
+
   // 设置状态
   const [autoSave, setAutoSave] = useState(true);
   const [autoSaveInterval, setAutoSaveInterval] = useState(30);
   const [todoReminder, setTodoReminder] = useState(true);
   const [contractReminder, setContractReminder] = useState(true);
   const [reminderDays, setReminderDays] = useState(30);
-  
+
   // 密码修改状态
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [passwordSuccess, setPasswordSuccess] = useState('');
-  
+
   const { theme, setTheme, layout, setLayout, settings, loadSettings, updateSettings, addNotification, changePassword } = useAppStore();
 
   useEffect(() => {
@@ -149,6 +155,54 @@ export function Settings() {
       message: '所有数据已清空',
       type: 'success'
     });
+  };
+
+  // Excel 导出
+  const handleExcelExport = async () => {
+    setIsLoading(true);
+    const result = await exportToExcel();
+    setIsLoading(false);
+    
+    if (result.success) {
+      await addNotification({
+        title: '导出成功',
+        message: '数据已导出到 Excel 文件',
+        type: 'success'
+      });
+    } else {
+      await addNotification({
+        title: '导出失败',
+        message: result.message,
+        type: 'error'
+      });
+    }
+  };
+
+  // Excel 导入
+  const handleExcelImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsLoading(true);
+    const result = await importCustomersFromExcel(file);
+    setIsLoading(false);
+    
+    if (result.success) {
+      await addNotification({
+        title: '导入成功',
+        message: result.message,
+        type: 'success'
+      });
+    } else {
+      await addNotification({
+        title: '导入失败',
+        message: result.message,
+        type: 'error'
+      });
+    }
+    
+    // 清空 input
+    e.target.value = '';
   };
 
   // 处理密码修改
@@ -437,6 +491,99 @@ export function Settings() {
 
         {/* 数据管理 */}
         <TabsContent value="data" className="space-y-6">
+          {/* Excel 导入导出 */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <FileSpreadsheet className="h-5 w-5" />
+                Excel 导入导出
+              </CardTitle>
+              <CardDescription>
+                将数据导出到 Excel 或从 Excel 导入客户数据
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* 导出按钮 */}
+              <div className="flex gap-3">
+                <Button 
+                  onClick={handleExcelExport} 
+                  disabled={isLoading}
+                  className="flex-1"
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  {isLoading ? '导出中...' : '导出全部数据'}
+                </Button>
+                <Button 
+                  variant="outline"
+                  onClick={downloadCustomerTemplate}
+                  disabled={isLoading}
+                >
+                  下载导入模板
+                </Button>
+              </div>
+
+              {/* 导入区域 */}
+              <div className="border rounded-lg p-4 bg-muted/50">
+                <p className="text-sm font-medium mb-2">导入客户数据</p>
+                <p className="text-xs text-muted-foreground mb-3">
+                  支持 .xlsx 格式，建议使用模板文件
+                </p>
+                <div className="flex items-center gap-3">
+                  <Button 
+                    variant="outline" 
+                    className="relative"
+                    disabled={isLoading}
+                  >
+                    <Upload className="h-4 w-4 mr-2" />
+                    选择 Excel 文件
+                    <input
+                      type="file"
+                      accept=".xlsx,.xls"
+                      onChange={handleExcelImport}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                      disabled={isLoading}
+                    />
+                  </Button>
+                  <span className="text-sm text-muted-foreground">
+                    {isLoading ? '导入中...' : '支持 .xlsx, .xls 格式'}
+                  </span>
+                </div>
+              </div>
+
+              {/* 导入说明 */}
+              <div className="text-sm text-muted-foreground space-y-1">
+                <p>• 导出文件包含：客户、合同、笔记、待办等所有数据</p>
+                <p>• 导入仅支持客户数据，请先下载模板文件</p>
+                <p>• 导入时会自动跳过重复的客户（根据手机号判断）</p>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* 快捷键说明 */}
+          <Card>
+            <CardHeader>
+              <CardTitle>键盘快捷键</CardTitle>
+              <CardDescription>
+                使用快捷键可以快速操作系统功能
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-2">
+                {getHotkeyList().map((hotkey) => (
+                  <div 
+                    key={hotkey.key} 
+                    className="flex items-center justify-between p-2 rounded bg-muted"
+                  >
+                    <kbd className="px-2 py-1 bg-background rounded border text-xs font-mono">
+                      {hotkey.key}
+                    </kbd>
+                    <span className="text-sm text-muted-foreground">{hotkey.description}</span>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
           {isElectron() ? <DesktopDataManager /> : <DataManager />}
         </TabsContent>
       </Tabs>

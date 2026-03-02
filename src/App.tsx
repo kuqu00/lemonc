@@ -14,6 +14,7 @@ import { useAppStore, checkSessionTimeout } from '@/store';
 import { db } from '@/db';
 import { Toaster } from '@/components/ui/sonner';
 import { toast } from 'sonner';
+import { useNavigationHotkeys, useGlobalFunctionHotkeys } from '@/hooks/useHotkeys';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('dashboard');
@@ -93,6 +94,27 @@ function App() {
     setCurrentPage(page);
     updateLastActivity();
   }, [updateLastActivity]);
+
+  // 注册导航快捷键
+  useNavigationHotkeys(handlePageChange);
+
+  // 注册全局功能快捷键
+  useGlobalFunctionHotkeys({
+    onSearch: () => {
+      // 触发搜索功能
+      document.dispatchEvent(new CustomEvent('app:search'));
+    },
+    onSave: () => {
+      document.dispatchEvent(new CustomEvent('app:save'));
+      toast.success('保存成功');
+    },
+    onNew: () => {
+      document.dispatchEvent(new CustomEvent('app:new'));
+    },
+    onRefresh: () => {
+      window.location.reload();
+    },
+  });
 
   // 渲染当前页面
   const renderPage = () => {
