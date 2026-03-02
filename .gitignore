@@ -6,7 +6,6 @@ node_modules
 # Build outputs
 dist
 dist-web
-dist-electron
 release
 
 # Tauri build outputs
@@ -29,6 +28,11 @@ src-tauri/gen
 .DS_Store
 Thumbs.db
 
+# macOS specific
+*.icns
+*.app
+*.dmg
+
 # Logs
 npm-debug.log*
 yarn-debug.log*
@@ -45,11 +49,9 @@ coverage
 *.temp
 
 # Large binary files
-*.dmg
 *.exe
-*.app
+*.msi
 *.zip
 dist-web.zip
 
-# Electron
-node_modules/electron/
+

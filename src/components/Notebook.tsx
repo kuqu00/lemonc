@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
+import { useTauriAutoSave } from '@/hooks/useTauriAutoSave';
 import { 
   Plus, 
   Search, 
@@ -133,6 +134,29 @@ export function Notebook() {
   
   const autoSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { settings, addNotification } = useAppStore();
+
+  // Tauri 自动保存 - 仅在编辑模式下启用
+  const noteData = selectedNote ? {
+    id: selectedNote.id,
+    title: editTitle,
+    content: editContent,
+    filePath: editFilePath,
+    startDate: editStartDate ? new Date(editStartDate).getTime() : undefined,
+    dueDate: editDueDate ? new Date(editDueDate).getTime() : undefined,
+    status: editStatus,
+    categoryLevel1: editCategory1,
+    categoryLevel2: editCategory2,
+    tags: editTags,
+    relatedCustomerIds: editRelatedCustomerIds,
+    updateTime: Date.now()
+  } : null;
+
+  useTauriAutoSave({
+    key: `note-${selectedNote?.id}`,
+    data: noteData,
+    enabled: !!selectedNote && saveStatus === 'unsaved',
+    delay: (settings?.autoSaveInterval || 30) * 1000
+  });
   const { addToRecycleBin } = useRecycleStore();
 
   // 加载笔记列表

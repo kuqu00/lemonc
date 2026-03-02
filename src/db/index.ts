@@ -72,8 +72,13 @@ class BankOfficeDatabase extends Dexie {
         todoReminder: true,
         contractReminder: true,
         reminderDays: 30,
-        defaultTodoTags: [],
-        defaultCustomerTags: []
+        desktopNotification: false,
+        followUpReminder: true,
+        followUpDays: 7,
+        autoLock: true,
+        autoLockMinutes: 30,
+        defaultTodoTags: ['工作', '客户', '合同', '其他'],
+        defaultCustomerTags: ['VIP客户', '重点跟进', '普通客户', '潜在客户']
       } as AppSettings);
     }
 

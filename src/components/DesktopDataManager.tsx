@@ -172,7 +172,7 @@ export function DesktopDataManager() {
   const handleExport = async () => {
     setIsLoading(true);
     try {
-      const result = await exportToDirectory(`银行信贷系统备份_${format(new Date(), 'yyyyMMdd')}.json`);
+      const result = await exportToDirectory(`lemonC系统备份_${format(new Date(), 'yyyyMMdd')}.json`);
       if (result.success && result.path) {
         toast({
           title: '导出成功',

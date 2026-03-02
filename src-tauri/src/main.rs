@@ -1,14 +1,22 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+mod database;
+
 use std::fs::{self, File};
 use std::io::{Read, Write};
 use std::path::PathBuf;
+use std::sync::Arc;
+use std::sync::atomic::{AtomicBool, Ordering};
 use chrono::{DateTime, Local};
 use serde::{Deserialize, Serialize};
-use tauri::{AppHandle, Manager};
+use tauri::{AppHandle, Manager, CustomMenuItem, State, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem};
+use tauri_plugin_window_state::{StateFlags, WindowExt};
 use walkdir::WalkDir;
 use zip::write::SimpleFileOptions;
+
+// 自动备份状态
+static AUTO_BACKUP_ENABLED: Arc<AtomicBool> = Arc::new(AtomicBool::new(false));
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct BackupInfo {
@@ -266,8 +274,111 @@ fn get_data_directory(app: AppHandle) -> Result<String, String> {
     Ok(data_dir.to_string_lossy().to_string())
 }
 
+// 启动自动备份
+#[tauri::command]
+async fn start_auto_backup(app: AppHandle, interval_minutes: u64) -> Result<String, String> {
+    AUTO_BACKUP_ENABLED.store(true, Ordering::SeqCst);
+    let enabled = Arc::clone(&AUTO_BACKUP_ENABLED);
+
+    tokio::spawn(async move {
+        let mut timer = tokio::time::interval(tokio::time::Duration::from_secs(interval_minutes * 60));
+
+        loop {
+            timer.tick().await;
+
+            if !enabled.load(Ordering::SeqCst) {
+                break;
+            }
+
+            match create_full_backup(app.clone()) {
+                Ok(backup) => {
+                    println!("Auto backup created: {}", backup.path);
+                }
+                Err(e) => {
+                    eprintln!("Auto backup failed: {}", e);
+                }
+            }
+        }
+    });
+
+    Ok(format!("自动备份已启动，间隔 {} 分钟", interval_minutes))
+}
+
+// 停止自动备份
+#[tauri::command]
+fn stop_auto_backup() -> Result<String, String> {
+    AUTO_BACKUP_ENABLED.store(false, Ordering::SeqCst);
+    Ok("自动备份已停止".to_string())
+}
+
 fn main() {
+    // 创建系统托盘
+    let tray_menu = SystemTrayMenu::new()
+        .add_item(CustomMenuItem::new("show", "显示窗口"))
+        .add_item(CustomMenuItem::new("hide", "隐藏窗口"))
+        .add_native_item(SystemTrayMenuItem::Separator)
+        .add_item(CustomMenuItem::new("quit", "退出"));
+
+    let tray = SystemTray::new().with_menu(tray_menu);
+
     tauri::Builder::default()
+        .plugin(tauri_plugin_window_state::Builder::new().build())
+        .system_tray(tray)
+        .on_window_event(|window, event| match event {
+            tauri::WindowEvent::CloseRequested { api, .. } => {
+                // 阻止窗口关闭,改为隐藏到托盘
+                window.hide().unwrap();
+                api.prevent_close();
+            }
+            _ => {}
+        })
+        .on_system_tray_event(|app, event| match event {
+            SystemTrayEvent::LeftClick { .. } => {
+                let window = app.get_webview_window("main").unwrap();
+                if window.is_visible().unwrap() {
+                    window.hide().unwrap();
+                } else {
+                    window.show().unwrap();
+                    window.set_focus().unwrap();
+                }
+            }
+            SystemTrayEvent::MenuItemClick { id, .. } => {
+                let window = app.get_webview_window("main").unwrap();
+                match id.as_str() {
+                    "show" => {
+                        window.show().unwrap();
+                        window.set_focus().unwrap();
+                    }
+                    "hide" => {
+                        window.hide().unwrap();
+                    }
+                    "quit" => {
+                        std::process::exit(0);
+                    }
+                    _ => {}
+                }
+            }
+            _ => {}
+        })
+        .setup(|app| {
+            // 初始化数据库
+            let data_dir = app.path().app_data_dir().expect("Failed to get app data dir");
+            let data_dir_str = data_dir.to_string_lossy().to_string();
+
+            // 创建 Tokio runtime
+            let rt = tokio::runtime::Runtime::new().expect("Failed to create runtime");
+            rt.block_on(async {
+                database::init_database(&data_dir_str).expect("Failed to initialize database");
+            });
+
+            // 设置窗口状态
+            let window = app.get_webview_window("main").unwrap();
+            window.with_state(|state| {
+                state.load_flags(StateFlags::all());
+            }).ok();
+
+            Ok(())
+        })
         .invoke_handler(tauri::generate_handler![
             write_data_file,
             read_data_file,
@@ -277,7 +388,12 @@ fn main() {
             list_backups,
             restore_backup,
             delete_backup,
-            get_data_directory
+            get_data_directory,
+            database::export_all_data,
+            database::import_all_data,
+            database::get_db_stats,
+            start_auto_backup,
+            stop_auto_backup
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

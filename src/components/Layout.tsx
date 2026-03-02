@@ -82,15 +82,15 @@ const themes: { value: ThemeType; label: string; color: string }[] = [
 ];
 
 export function Layout({ children, currentPage, onPageChange }: LayoutProps) {
-  const { 
-    logout, 
-    currentUser, 
-    theme, 
-    setTheme, 
-    layout, 
+  const {
+    logout,
+    currentUser,
+    theme,
+    setTheme,
+    layout,
     setLayout,
-    notifications, 
-    unreadCount, 
+    notifications,
+    unreadCount,
     notificationFilter,
     loadNotifications,
     markNotificationRead,
@@ -98,7 +98,10 @@ export function Layout({ children, currentPage, onPageChange }: LayoutProps) {
     setNotificationFilter,
     clearNotifications,
     initDesktopNotification,
-    desktopNotificationEnabled
+    desktopNotificationEnabled,
+    settings,
+    updateLastActivity,
+    isAuthenticated
   } = useAppStore();
   
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -116,6 +119,45 @@ export function Layout({ children, currentPage, onPageChange }: LayoutProps) {
 
   // 使用智能提醒
   useSmartReminders();
+
+  // 自动锁定功能
+  useEffect(() => {
+    if (!isAuthenticated || !settings?.autoLock) return;
+
+    const autoLockMinutes = settings.autoLockMinutes || 30;
+    const timeoutId = setInterval(() => {
+      const { lastActivity } = useAppStore.getState();
+      const now = Date.now();
+      const inactiveTime = (now - lastActivity) / (1000 * 60); // 转换为分钟
+
+      if (inactiveTime >= autoLockMinutes) {
+        logout();
+      }
+    }, 60000); // 每分钟检查一次
+
+    return () => clearInterval(timeoutId);
+  }, [isAuthenticated, settings?.autoLock, settings?.autoLockMinutes, logout]);
+
+  // 监听用户活动
+  useEffect(() => {
+    if (!isAuthenticated || !settings?.autoLock) return;
+
+    const handleActivity = () => {
+      updateLastActivity();
+    };
+
+    // 监听各种用户活动事件
+    const events = ['mousedown', 'keydown', 'scroll', 'touchstart'];
+    events.forEach(event => {
+      window.addEventListener(event, handleActivity);
+    });
+
+    return () => {
+      events.forEach(event => {
+        window.removeEventListener(event, handleActivity);
+      });
+    };
+  }, [isAuthenticated, settings?.autoLock, updateLastActivity]);
 
   // 页面切换时创建标签
   useEffect(() => {
@@ -203,8 +245,8 @@ export function Layout({ children, currentPage, onPageChange }: LayoutProps) {
   const renderSidebar = () => (
     <div className="flex flex-col h-full">
       <div className="p-6 border-b">
-        <h1 className="text-xl font-bold text-primary">银行信贷办公系统</h1>
-        <p className="text-xs text-muted-foreground mt-1">Bank Credit Office System</p>
+        <h1 className="text-xl font-bold text-primary">lemonC 办公系统</h1>
+        <p className="text-xs text-muted-foreground mt-1">LemonC Office System</p>
       </div>
       
       <ScrollArea className="flex-1 py-4">
@@ -277,7 +319,7 @@ export function Layout({ children, currentPage, onPageChange }: LayoutProps) {
           </SheetContent>
         </Sheet>
         
-        <h1 className="text-lg font-semibold lg:hidden">银行信贷办公系统</h1>
+        <h1 className="text-lg font-semibold lg:hidden">lemonC 办公系统</h1>
       </div>
 
       <div className="flex items-center gap-2">
@@ -541,7 +583,7 @@ export function Layout({ children, currentPage, onPageChange }: LayoutProps) {
       <div className="min-h-screen flex flex-col">
         <header className="border-b bg-card">
           <div className="flex items-center justify-between px-4 lg:px-6 h-16">
-            <h1 className="text-xl font-bold text-primary">银行信贷办公系统</h1>
+            <h1 className="text-xl font-bold text-primary">lemonC 办公系统</h1>
             
             <nav className="hidden md:flex items-center gap-1">
               {menuItems.map((item) => {

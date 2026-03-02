@@ -150,7 +150,7 @@ export const useRecycleStore = create<RecycleStore>()(
       },
     }),
     {
-      name: 'bank-credit-recycle-bin',
+      name: 'lemonc-recycle-bin',
       partialize: (state) => ({ 
         items: state.items,
         lastCleanupAt: state.lastCleanupAt,

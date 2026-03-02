@@ -1,0 +1,9 @@
+@echo off
+echo 正在清理 Vite 缓存...
+rmdir /s /q node_modules\.vite 2>nul
+
+echo 正在重新安装依赖...
+call npm install
+
+echo 正在启动开发服务器...
+call npm run dev

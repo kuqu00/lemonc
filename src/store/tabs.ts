@@ -329,7 +329,7 @@ export const useTabsStore = create<TabsState>()(
       }
     }),
     {
-      name: 'bank-credit-tabs',
+      name: 'lemonc-tabs',
       partialize: (state) => ({ 
         tabs: state.tabs.map(t => ({ ...t, isActive: false, isLoading: false })),
         closedTabs: []

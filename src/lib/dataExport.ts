@@ -71,7 +71,7 @@ export const downloadJSON = (data: ExportData, filename?: string) => {
   
   const link = document.createElement('a');
   link.href = url;
-  link.download = filename || `银行信贷系统备份_${formatDate(new Date())}.json`;
+  link.download = filename || `lemonC系统备份_${formatDate(new Date())}.json`;
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
@@ -157,7 +157,7 @@ export const saveToLocalFile = async (data: ExportData, suggestedName?: string):
     }
 
     const fileHandle = await (window as any).showSaveFilePicker({
-      suggestedName: suggestedName || `银行信贷系统备份_${formatDate(new Date())}.json`,
+      suggestedName: suggestedName || `lemonC系统备份_${formatDate(new Date())}.json`,
       types: [
         {
           description: 'JSON 备份文件',

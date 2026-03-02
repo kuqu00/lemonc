@@ -219,8 +219,15 @@ export interface AppSettings {
   todoReminder: boolean;
   contractReminder: boolean;
   reminderDays: number;
+  desktopNotification?: boolean;
+  followUpReminder?: boolean;
+  followUpDays?: number;
+  autoLock?: boolean;
+  autoLockMinutes?: number;
   defaultTodoTags: string[];
   defaultCustomerTags: string[];
+  saveToLocalEnabled?: boolean;
+  localSavePath?: string;
 }
 
 // ==================== 通知类型 ====================
