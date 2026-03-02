@@ -95,13 +95,15 @@ export function Settings() {
       await addNotification({
         title: '保存成功',
         message: '系统设置已更新',
-        type: 'success'
+        type: 'success',
+        category: 'system'
       });
     } catch (error) {
       await addNotification({
         title: '保存失败',
         message: '请重试',
-        type: 'error'
+        type: 'error',
+        category: 'system'
       });
     } finally {
       setIsSaving(false);
@@ -132,7 +134,8 @@ export function Settings() {
     await addNotification({
       title: '导出成功',
       message: '数据已导出到文件',
-      type: 'success'
+      type: 'success',
+      category: 'system'
     });
   };
 
@@ -153,7 +156,8 @@ export function Settings() {
     await addNotification({
       title: '清空完成',
       message: '所有数据已清空',
-      type: 'success'
+      type: 'success',
+      category: 'system'
     });
   };
 
@@ -167,13 +171,15 @@ export function Settings() {
       await addNotification({
         title: '导出成功',
         message: '数据已导出到 Excel 文件',
-        type: 'success'
+        type: 'success',
+        category: 'system'
       });
     } else {
       await addNotification({
         title: '导出失败',
         message: result.message,
-        type: 'error'
+        type: 'error',
+        category: 'system'
       });
     }
   };
@@ -191,16 +197,18 @@ export function Settings() {
       await addNotification({
         title: '导入成功',
         message: result.message,
-        type: 'success'
+        type: 'success',
+        category: 'system'
       });
     } else {
       await addNotification({
         title: '导入失败',
         message: result.message,
-        type: 'error'
+        type: 'error',
+        category: 'system'
       });
     }
-    
+
     // 清空 input
     e.target.value = '';
   };
@@ -237,7 +245,8 @@ export function Settings() {
       await addNotification({
         title: '密码修改成功',
         message: '您的密码已更新',
-        type: 'success'
+        type: 'success',
+        category: 'system'
       });
     } else {
       setPasswordError(result.message);
