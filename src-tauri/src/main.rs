@@ -6,7 +6,7 @@ use std::io::{Read, Write};
 use std::path::PathBuf;
 use chrono::Local;
 use serde::{Deserialize, Serialize};
-use tauri::{AppHandle, Manager, CustomMenuItem, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem};
+use tauri::{AppHandle, Manager};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct BackupInfo {
@@ -19,7 +19,7 @@ struct BackupInfo {
 
 // 获取应用数据目录
 fn get_data_dir(app: &AppHandle) -> PathBuf {
-    app.path_resolver()
+    app.path()
         .app_data_dir()
         .expect("Failed to get app data dir")
 }
@@ -209,51 +209,7 @@ fn get_data_directory(app: AppHandle) -> Result<String, String> {
 }
 
 fn main() {
-    let tray_menu = SystemTrayMenu::new()
-        .add_item(CustomMenuItem::new("show", "显示窗口"))
-        .add_item(CustomMenuItem::new("hide", "隐藏窗口"))
-        .add_native_item(SystemTrayMenuItem::Separator)
-        .add_item(CustomMenuItem::new("quit", "退出"));
-
-    let tray = SystemTray::new().with_menu(tray_menu);
-
     tauri::Builder::default()
-        .system_tray(tray)
-        .on_window_event(|window, event| match event {
-            tauri::WindowEvent::CloseRequested { api, .. } => {
-                window.hide().unwrap();
-                api.prevent_close();
-            }
-            _ => {}
-        })
-        .on_system_tray_event(|app, event| match event {
-            SystemTrayEvent::LeftClick { .. } => {
-                let window = app.get_window("main").unwrap();
-                if window.is_visible().unwrap() {
-                    window.hide().unwrap();
-                } else {
-                    window.show().unwrap();
-                    window.set_focus().unwrap();
-                }
-            }
-            SystemTrayEvent::MenuItemClick { id, .. } => {
-                let window = app.get_window("main").unwrap();
-                match id.as_str() {
-                    "show" => {
-                        window.show().unwrap();
-                        window.set_focus().unwrap();
-                    }
-                    "hide" => {
-                        window.hide().unwrap();
-                    }
-                    "quit" => {
-                        std::process::exit(0);
-                    }
-                    _ => {}
-                }
-            }
-            _ => {}
-        })
         .invoke_handler(tauri::generate_handler![
             write_data_file,
             read_data_file,
