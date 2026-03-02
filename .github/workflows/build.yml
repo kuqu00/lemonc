@@ -48,7 +48,7 @@ jobs:
         run: npm run build
 
       - name: Build Tauri app
-        run: npm run tauri:build
+        run: npx tauri build --debug
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
