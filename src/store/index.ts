@@ -176,7 +176,7 @@ export const useAppStore = create<AppState>()(
 
         // 发送桌面通知
         const state = get();
-        if (state.desktopNotificationEnabled && shouldSendDesktopNotification(newNotification.category, notification.type)) {
+        if (state.desktopNotificationEnabled && newNotification.category && shouldSendDesktopNotification(newNotification.category, notification.type)) {
           sendDesktopNotification(notification.title, { body: notification.message });
         }
       },

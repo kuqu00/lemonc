@@ -235,7 +235,7 @@ export function Layout({ children, currentPage, onPageChange }: LayoutProps) {
     };
     // 单次遍历计算所有分类
     for (const n of notifications) {
-      if (!n.read && n.category in counts) {
+      if (!n.read && n.category && n.category in counts) {
         counts[n.category as NotificationCategory]++;
       }
     }
@@ -473,7 +473,7 @@ export function Layout({ children, currentPage, onPageChange }: LayoutProps) {
               <ScrollArea className="h-80">
                 <div className="divide-y">
                   {filteredNotifications.map((notif) => {
-                    const categoryConfig = categoryLabels[notif.category] || categoryLabels.general;
+                    const categoryConfig = (notif.category && categoryLabels[notif.category]) || categoryLabels.general;
                     return (
                       <div
                         key={notif.id}
