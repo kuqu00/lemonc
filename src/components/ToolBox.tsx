@@ -505,7 +505,7 @@ export function ToolBox() {
       });
       
       console.log('轻度压缩完成:', file.name, '原大小:', file.size, '压缩后:', optimizedBytes.byteLength);
-      return new Blob([optimizedBytes.buffer], { type: 'application/pdf' });
+      return new Blob([optimizedBytes as unknown as ArrayBuffer], { type: 'application/pdf' });
     } catch (error) {
       console.error('PDF 轻度压缩失败:', error);
       throw error;

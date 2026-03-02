@@ -76,11 +76,10 @@ export function DesktopDataManager() {
   useEffect(() => {
     const init = async () => {
       const isTauriApp = isTauri();
-      const isElectronApp = isElectron();
       setIsTauriEnv(isTauriApp);
-      setIsDesktopEnv(isTauriApp || isElectronApp);
+      setIsDesktopEnv(isTauriApp);
       
-      if (isTauriApp || isElectronApp) {
+      if (isTauriApp) {
         try {
           const path = await getDataPath();
           setDataPath(path);

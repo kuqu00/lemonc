@@ -153,8 +153,8 @@ export function Notebook() {
 
   useTauriAutoSave({
     key: `note-${selectedNote?.id}`,
-    data: noteData,
-    enabled: !!selectedNote && saveStatus === 'unsaved',
+    data: noteData || {} as object,
+    enabled: !!selectedNote && saveStatus === 'unsaved' && !!noteData,
     delay: (settings?.autoSaveInterval || 30) * 1000
   });
   const { addToRecycleBin } = useRecycleStore();

@@ -238,7 +238,7 @@ export interface Notification {
   title: string;
   message: string;
   type: 'info' | 'success' | 'warning' | 'error';
-  category: NotificationCategory;
+  category?: NotificationCategory;
   read: boolean;
   createTime: number;
   link?: string; // 可选的跳转链接
