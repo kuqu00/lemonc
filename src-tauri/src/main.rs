@@ -11,7 +11,7 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use chrono::{DateTime, Local};
 use serde::{Deserialize, Serialize};
 use tauri::{AppHandle, Manager, CustomMenuItem, State, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem};
-use tauri_plugin_window_state::{StateFlags, WindowExt};
+use tauri_plugin_window_state::WindowExt;
 use walkdir::WalkDir;
 use zip::write::SimpleFileOptions;
 
@@ -370,12 +370,6 @@ fn main() {
             rt.block_on(async {
                 database::init_database(&data_dir_str).expect("Failed to initialize database");
             });
-
-            // 设置窗口状态
-            let window = app.get_webview_window("main").unwrap();
-            window.with_state(|state| {
-                state.load_flags(StateFlags::all());
-            }).ok();
 
             Ok(())
         })
