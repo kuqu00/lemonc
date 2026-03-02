@@ -50,6 +50,7 @@ jobs:
           cargo build --release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RUSTFLAGS: -C target-feature=+crt-static
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
