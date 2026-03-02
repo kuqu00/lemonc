@@ -47,27 +47,6 @@
     "shortDescription": "LemonC办公系统",
     "longDescription": "LemonC办公系统 - 一款专为银行信贷场景设计的纯离线本地办公系统，支持客户管理、待办事项、数据分析等功能",
     "copyright": "Copyright © 2026 lemonC",
-    "publisher": "lemonC",
-    "fileAssociations": [
-      {
-        "ext": ["lemonc", "lcbackup"],
-        "name": "LemonC 备份文件",
-        "mimeType": "application/lemonc-backup",
-        "role": "Editor"
-      }
-    ]
-  },
-  "plugins": {
-    "window-state": {
-      "fullscreen": false
-    },
-    "updater": {
-      "active": false,
-      "endpoints": [
-        "https://github.com/yourusername/lemonc/releases/latest/download/latest.json"
-      ],
-      "dialog": true,
-      "pubkey": "YOUR_PUBLIC_KEY_HERE"
-    }
+    "publisher": "lemonC"
   }
 }
