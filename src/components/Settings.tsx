@@ -5,7 +5,9 @@ import {
   Layout, 
   Save,
   Monitor,
-  CheckCircle2
+  CheckCircle2,
+  Shield,
+  Lock
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -14,6 +16,7 @@ import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useAppStore } from '@/store';
 import { db } from '@/db';
 import type { ThemeType } from '@/types';
@@ -39,6 +42,7 @@ const layouts = [
 export function Settings() {
   const [activeTab, setActiveTab] = useState('appearance');
   const [isSaving, setIsSaving] = useState(false);
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
   
   // 设置状态
   const [autoSave, setAutoSave] = useState(true);
@@ -47,7 +51,14 @@ export function Settings() {
   const [contractReminder, setContractReminder] = useState(true);
   const [reminderDays, setReminderDays] = useState(30);
   
-  const { theme, setTheme, layout, setLayout, settings, loadSettings, updateSettings, addNotification } = useAppStore();
+  // 密码修改状态
+  const [oldPassword, setOldPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [passwordSuccess, setPasswordSuccess] = useState('');
+  
+  const { theme, setTheme, layout, setLayout, settings, loadSettings, updateSettings, addNotification, changePassword } = useAppStore();
 
   useEffect(() => {
     loadSettings();
@@ -140,10 +151,49 @@ export function Settings() {
     });
   };
 
+  // 处理密码修改
+  const handleChangePassword = async () => {
+    setPasswordError('');
+    setPasswordSuccess('');
+
+    if (!oldPassword || !newPassword || !confirmPassword) {
+      setPasswordError('请填写所有密码字段');
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      setPasswordError('新密码长度至少为6位');
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setPasswordError('两次输入的新密码不一致');
+      return;
+    }
+
+    setIsChangingPassword(true);
+    const result = await changePassword(oldPassword, newPassword);
+    setIsChangingPassword(false);
+
+    if (result.success) {
+      setPasswordSuccess(result.message);
+      setOldPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+      await addNotification({
+        title: '密码修改成功',
+        message: '您的密码已更新',
+        type: 'success'
+      });
+    } else {
+      setPasswordError(result.message);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full max-w-md grid-cols-3">
+        <TabsList className="grid w-full max-w-md grid-cols-4">
           <TabsTrigger value="appearance">
             <Palette className="h-4 w-4 mr-2" />
             外观
@@ -151,6 +201,10 @@ export function Settings() {
           <TabsTrigger value="function">
             <SettingsIcon className="h-4 w-4 mr-2" />
             功能
+          </TabsTrigger>
+          <TabsTrigger value="security">
+            <Shield className="h-4 w-4 mr-2" />
+            安全
           </TabsTrigger>
           <TabsTrigger value="data">
             <Monitor className="h-4 w-4 mr-2" />
@@ -296,6 +350,89 @@ export function Settings() {
               {isSaving ? '保存中...' : '保存设置'}
             </Button>
           </div>
+        </TabsContent>
+
+        {/* 安全设置 */}
+        <TabsContent value="security" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Lock className="h-5 w-5" />
+                修改密码
+              </CardTitle>
+              <CardDescription>
+                定期更换密码可以提高账户安全性
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {passwordError && (
+                <Alert variant="destructive">
+                  <AlertDescription>{passwordError}</AlertDescription>
+                </Alert>
+              )}
+              {passwordSuccess && (
+                <Alert className="bg-green-50 border-green-200">
+                  <AlertDescription className="text-green-700">{passwordSuccess}</AlertDescription>
+                </Alert>
+              )}
+
+              <div className="space-y-2">
+                <Label htmlFor="old-password">原密码</Label>
+                <Input
+                  id="old-password"
+                  type="password"
+                  placeholder="请输入原密码"
+                  value={oldPassword}
+                  onChange={(e) => setOldPassword(e.target.value)}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="new-password">新密码</Label>
+                <Input
+                  id="new-password"
+                  type="password"
+                  placeholder="请输入新密码（至少6位）"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="confirm-password">确认新密码</Label>
+                <Input
+                  id="confirm-password"
+                  type="password"
+                  placeholder="请再次输入新密码"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                />
+              </div>
+
+              <Button 
+                onClick={handleChangePassword} 
+                disabled={isChangingPassword}
+                className="w-full"
+              >
+                {isChangingPassword ? '修改中...' : '修改密码'}
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Shield className="h-5 w-5" />
+                安全提示
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2 text-sm text-muted-foreground">
+              <p>• 建议密码长度至少为6位</p>
+              <p>• 定期更换密码可以提高安全性</p>
+              <p>• 系统会在30分钟无操作后自动锁定，需要重新输入密码</p>
+              <p>• 请勿将密码告诉他人</p>
+            </CardContent>
+          </Card>
         </TabsContent>
 
         {/* 数据管理 */}

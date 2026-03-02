@@ -9,6 +9,7 @@ import { Calculator } from '@/components/Calculator';
 import { ToolBox } from '@/components/ToolBox';
 import { Analytics } from '@/components/Analytics';
 import { Settings } from '@/components/Settings';
+import { PasswordVerifyDialog } from '@/components/PasswordVerifyDialog';
 import { useAppStore, checkSessionTimeout } from '@/store';
 import { db } from '@/db';
 import { Toaster } from '@/components/ui/sonner';
@@ -17,13 +18,15 @@ import { toast } from 'sonner';
 function App() {
   const [currentPage, setCurrentPage] = useState('dashboard');
   const [isInitialized, setIsInitialized] = useState(false);
+  const [needsPasswordVerify, setNeedsPasswordVerify] = useState(false);
   
   const { 
     isAuthenticated, 
     loadSettings, 
     loadNotifications,
     loadQuickActions,
-    updateLastActivity
+    updateLastActivity,
+    logout
   } = useAppStore();
 
   // 初始化
@@ -54,16 +57,17 @@ function App() {
 
   // 检查会话超时
   useEffect(() => {
-    if (!isAuthenticated) return;
+    if (!isAuthenticated || needsPasswordVerify) return;
 
     const interval = setInterval(() => {
       if (checkSessionTimeout()) {
-        toast.info('会话已过期，请重新登录');
+        setNeedsPasswordVerify(true);
+        toast.info('会话已超时，请重新输入密码');
       }
     }, 60000); // 每分钟检查一次
 
     return () => clearInterval(interval);
-  }, [isAuthenticated]);
+  }, [isAuthenticated, needsPasswordVerify]);
 
   // 更新活动时间
   useEffect(() => {
@@ -141,6 +145,19 @@ function App() {
       <Layout currentPage={currentPage} onPageChange={handlePageChange}>
         {renderPage()}
       </Layout>
+      <PasswordVerifyDialog
+        isOpen={needsPasswordVerify}
+        onVerify={() => {
+          setNeedsPasswordVerify(false);
+          updateLastActivity();
+          toast.success('验证成功，欢迎回来');
+        }}
+        onLogout={() => {
+          setNeedsPasswordVerify(false);
+          logout();
+          toast.info('已退出登录');
+        }}
+      />
       <Toaster />
     </>
   );

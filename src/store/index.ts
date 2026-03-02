@@ -33,6 +33,7 @@ interface AppState {
   login: (user: User) => void;
   logout: () => void;
   updateLastActivity: () => void;
+  changePassword: (oldPassword: string, newPassword: string) => Promise<{ success: boolean; message: string }>;
   setTheme: (theme: ThemeType) => void;
   setLayout: (layout: LayoutType) => void;
   loadSettings: () => Promise<void>;
@@ -235,6 +236,39 @@ export const useAppStore = create<AppState>()(
       // 设置加载状态
       setLoading: (loading: boolean) => {
         set({ isLoading: loading });
+      },
+
+      // 修改密码
+      changePassword: async (oldPassword: string, newPassword: string) => {
+        const state = get();
+        if (!state.currentUser) {
+          return { success: false, message: '用户未登录' };
+        }
+
+        try {
+          // 验证旧密码
+          const user = await db.users.get(state.currentUser.id);
+          if (!user) {
+            return { success: false, message: '用户不存在' };
+          }
+
+          if (user.password !== oldPassword) {
+            return { success: false, message: '原密码错误' };
+          }
+
+          // 更新密码
+          await db.users.update(user.id, { password: newPassword });
+          
+          // 更新当前用户信息
+          set({
+            currentUser: { ...user, password: newPassword }
+          });
+
+          return { success: true, message: '密码修改成功' };
+        } catch (error) {
+          console.error('Change password error:', error);
+          return { success: false, message: '修改密码失败，请重试' };
+        }
       }
     }),
     {
