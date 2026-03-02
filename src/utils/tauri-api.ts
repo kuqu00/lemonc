@@ -8,6 +8,16 @@ export interface BackupInfo {
   backupType: 'full' | 'incremental';
 }
 
+// 获取数据路径
+export async function getDataPath(): Promise<string> {
+  return await invoke('get_data_directory') as string;
+}
+
+// 执行增量备份
+export async function performIncrementalBackup(): Promise<BackupInfo | null> {
+  return await invoke('create_incremental_backup', { lastBackupTime: new Date().toISOString() }) as BackupInfo;
+}
+
 // 写入数据文件
 export async function writeDataFile(filename: string, content: object): Promise<void> {
   await invoke('write_data_file', {

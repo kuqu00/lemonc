@@ -38,7 +38,6 @@ import {
   importFromFile,
   deleteBackup,
   cleanupBackups,
-  isElectron,
   isTauri,
   isDesktop,
   type AppData

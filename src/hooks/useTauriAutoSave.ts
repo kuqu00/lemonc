@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { isTauri } from '@/lib/localDataStore';
 import { writeDataFile } from '@/utils/tauri-api';
 
-interface UseTauriAutoSaveOptions<T> {
+interface UseTauriAutoSaveOptions<T extends object> {
   key: string;
   data: T;
   enabled?: boolean;
@@ -13,7 +13,7 @@ interface UseTauriAutoSaveOptions<T> {
  * Tauri 环境自动保存 Hook
  * 数据变化后延迟保存到本地文件系统
  */
-export function useTauriAutoSave<T>({
+export function useTauriAutoSave<T extends object>({
   key,
   data,
   enabled = true,
@@ -64,7 +64,7 @@ export function useTauriAutoSave<T>({
 /**
  * 立即保存数据（用于手动保存）
  */
-export async function immediateSave<T>(key: string, data: T): Promise<boolean> {
+export async function immediateSave<T extends object>(key: string, data: T): Promise<boolean> {
   if (!isTauri()) {
     return false;
   }

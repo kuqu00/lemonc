@@ -50,7 +50,7 @@ export function PasswordVerifyDialog({ isOpen, onVerify, onLogout }: PasswordVer
 
   return (
     <Dialog open={isOpen} onOpenChange={() => {}}>
-      <DialogContent className="sm:max-w-md" hideCloseButton>
+      <DialogContent className="sm:max-w-md" showCloseButton={false}>
         <DialogHeader className="text-center">
           <div className="mx-auto w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
             <Lock className="w-6 h-6 text-primary" />

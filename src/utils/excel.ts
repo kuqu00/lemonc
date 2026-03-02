@@ -22,7 +22,7 @@ export async function exportToExcel() {
         '邮箱': c.email || '',
         '地址': c.address || '',
         '公司名称': c.company || '',
-        '备注': c.notes || '',
+        '备注': c.remark || '',
         '创建时间': new Date(c.createTime).toLocaleString('zh-CN'),
       }));
       const ws1 = XLSX.utils.json_to_sheet(customerData);
@@ -32,15 +32,13 @@ export async function exportToExcel() {
     // 合同表
     if (contracts.length > 0) {
       const contractData = contracts.map(c => ({
-        '合同编号': c.contractNo,
-        '客户名称': c.customerName,
+        '合同编号': c.code,
         '贷款金额': c.amount,
-        '贷款利率': c.interestRate + '%',
         '贷款期限': c.term + '个月',
         '开始日期': new Date(c.startDate).toLocaleDateString('zh-CN'),
         '结束日期': new Date(c.endDate).toLocaleDateString('zh-CN'),
-        '状态': c.status === 'active' ? '进行中' : c.status === 'completed' ? '已完成' : '已逾期',
-        '备注': c.notes || '',
+        '状态': c.status === 'normal' ? '正常' : c.status === 'litigation' ? '诉讼中' : '执行中',
+        '备注': c.remark || '',
       }));
       const ws2 = XLSX.utils.json_to_sheet(contractData);
       XLSX.utils.book_append_sheet(wb, ws2, '合同列表');
@@ -48,10 +46,10 @@ export async function exportToExcel() {
 
     // 笔记表
     if (notes.length > 0) {
-      const noteData = notes.filter(n => !n.deleted).map(n => ({
+      const noteData = notes.filter(n => !n.isDeleted).map(n => ({
         '标题': n.title,
         '内容': n.content.substring(0, 100) + (n.content.length > 100 ? '...' : ''),
-        '标签': n.tags?.join(', ') || '',
+        '分类': n.categoryLevel1 + (n.categoryLevel2 ? '/' + n.categoryLevel2 : ''),
         '创建时间': new Date(n.createTime).toLocaleString('zh-CN'),
         '更新时间': new Date(n.updateTime).toLocaleString('zh-CN'),
       }));
@@ -61,11 +59,22 @@ export async function exportToExcel() {
 
     // 待办表
     if (todos.length > 0) {
-      const todoData = todos.filter(t => !t.deleted).map(t => ({
+      const priorityMap: Record<string, string> = {
+        'urgent-important': '重要且紧急',
+        'urgent-not-important': '紧急不重要',
+        'not-urgent-important': '重要不紧急',
+        'not-urgent-not-important': '不重要不紧急'
+      };
+      const statusMap: Record<string, string> = {
+        'pending': '待办',
+        'in-progress': '进行中',
+        'completed': '已完成'
+      };
+      const todoData = todos.filter(t => !t.isDeleted).map(t => ({
         '标题': t.title,
         '描述': t.description || '',
-        '优先级': t.priority === 'high' ? '高' : t.priority === 'medium' ? '中' : '低',
-        '状态': t.completed ? '已完成' : '待办',
+        '优先级': priorityMap[t.priority] || t.priority,
+        '状态': statusMap[t.status] || t.status,
         '截止日期': t.dueDate ? new Date(t.dueDate).toLocaleDateString('zh-CN') : '',
         '创建时间': new Date(t.createTime).toLocaleString('zh-CN'),
       }));
@@ -109,15 +118,18 @@ export async function importCustomersFromExcel(file: File): Promise<{ success: b
         for (const row of jsonData as any[]) {
           const customer = {
             id: `cust-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+            type: 'personal' as const,
             name: row['客户名称'] || row['name'] || '',
+            code: `C${Date.now().toString(36).toUpperCase()}`,
             phone: row['联系电话'] || row['phone'] || '',
             email: row['邮箱'] || row['email'] || '',
             address: row['地址'] || row['address'] || '',
             company: row['公司名称'] || row['company'] || '',
-            notes: row['备注'] || row['notes'] || '',
+            remark: row['备注'] || row['notes'] || '',
+            tags: [] as string[],
             createTime: Date.now(),
             updateTime: Date.now(),
-            deleted: 0,
+            isDeleted: false,
           };
 
           if (customer.name && customer.phone) {

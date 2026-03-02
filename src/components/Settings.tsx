@@ -38,8 +38,8 @@ import { isTauri, performFullBackup, exportToDirectory, getBackupList, restoreBa
 // 动态导入 Tauri 插件(仅在 Tauri 环境中可用)
 const loadUpdaterPlugin = async () => {
   try {
-    const plugin = await import('@tauri-apps/plugin-updater');
-    return plugin;
+    const { check } = await import('@tauri-apps/plugin-updater');
+    return { check };
   } catch {
     return null;
   }
@@ -174,13 +174,13 @@ export function Settings() {
     }
 
     try {
-      const update = await updaterPlugin.checkUpdate();
-      if (update && update.manifest) {
+      const update = await updaterPlugin.check();
+      if (update) {
         setUpdateAvailable(true);
         setUpdateInfo(update);
         await addNotification({
           title: '发现新版本',
-          message: `当前版本: ${update.currentVersion}, 新版本: ${update.manifest.version}`,
+          message: `发现新版本可用`,
           type: 'success',
           category: 'system'
         });
@@ -214,8 +214,10 @@ export function Settings() {
 
     setIsUpdating(true);
     try {
-      await updaterPlugin.installUpdate();
-      await processPlugin.relaunch();
+      if (updateInfo) {
+        await updateInfo.downloadAndInstall();
+        await processPlugin.relaunch();
+      }
     } catch (error) {
       console.error('安装更新失败:', error);
       setIsUpdating(false);

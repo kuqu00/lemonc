@@ -6,8 +6,8 @@ import {
   restoreFromBackup,
   removeBackup,
   getDataPath,
-  BackupInfo
 } from '../utils/tauri-db';
+import type { BackupInfo } from '../utils/tauri-api';
 
 export default function BackupManager() {
   const [backups, setBackups] = useState<BackupInfo[]>([]);

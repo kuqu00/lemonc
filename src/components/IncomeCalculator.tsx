@@ -178,10 +178,6 @@ export function IncomeCalculator() {
       const calcSteps = generateSteps(parsedExpression, calcResult);
       console.log('计算步骤:', calcSteps);
 
-      // 3. 计算最终结果
-      const calcResult = calculateExpression(parsedExpression);
-      console.log('最终结果:', calcResult);
-
       setResult(calcResult);
       setSteps(calcSteps);
 

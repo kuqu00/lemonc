@@ -166,16 +166,17 @@ export const useAppStore = create<AppState>()(
       addNotification: async (notification) => {
         const newNotification: Notification = {
           ...notification,
+          category: notification.category || 'general',
           id: `notif-${Date.now()}`,
           createTime: Date.now(),
           read: false
         };
         await db.notifications.add(newNotification);
         await get().loadNotifications();
-        
+
         // 发送桌面通知
         const state = get();
-        if (state.desktopNotificationEnabled && shouldSendDesktopNotification(notification.category, notification.type)) {
+        if (state.desktopNotificationEnabled && shouldSendDesktopNotification(newNotification.category, notification.type)) {
           sendDesktopNotification(notification.title, { body: notification.message });
         }
       },

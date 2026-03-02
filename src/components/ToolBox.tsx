@@ -501,12 +501,11 @@ export function ToolBox() {
       
       const optimizedBytes = await pdfDoc.save({
         useObjectStreams: true,
-        addDefaultPage: false,
-        preserveExistingEncryption: false,
+        addDefaultPage: false
       });
       
       console.log('轻度压缩完成:', file.name, '原大小:', file.size, '压缩后:', optimizedBytes.byteLength);
-      return new Blob([optimizedBytes], { type: 'application/pdf' });
+      return new Blob([optimizedBytes.buffer], { type: 'application/pdf' });
     } catch (error) {
       console.error('PDF 轻度压缩失败:', error);
       throw error;
