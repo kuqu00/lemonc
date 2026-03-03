@@ -6,7 +6,7 @@ use std::io::{Read, Write};
 use std::path::PathBuf;
 use chrono::Local;
 use serde::{Deserialize, Serialize};
-use tauri::{AppHandle, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem};
+use tauri::{AppHandle, Manager};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct BackupInfo {
@@ -209,49 +209,7 @@ fn get_data_directory(app: AppHandle) -> Result<String, String> {
 }
 
 fn main() {
-    let system_tray = SystemTray::new()
-        .with_icon("icons/icon.ico")
-        .with_menu(SystemTrayMenu::new()
-            .add_item(SystemTrayMenuItem::new("打开主窗口", true, None))
-            .add_native_item(tauri::SystemTrayMenuItem::Separator)
-            .add_item(SystemTrayMenuItem::new("退出", false, None))
-        );
-    
     tauri::Builder::default()
-        .system_tray(system_tray)
-        .on_system_tray_event(|app, event| {
-            match event {
-                SystemTrayEvent::MenuItemClick { id, .. } => {
-                    match id.as_str() {
-                        "打开主窗口" => {
-                            if let Some(window) = app.get_window("main") {
-                                window.show().unwrap();
-                                window.set_focus().unwrap();
-                            } else {
-                                tauri::WindowBuilder::new(
-                                    app,
-                                    "main",
-                                    tauri::WindowUrl::App("index.html".into())
-                                )
-                                .title("lemonC 办公系统")
-                                .inner_size(1440.0, 900.0)
-                                .min_inner_size(1024.0, 768.0)
-                                .resizable(true)
-                                .transparent(false)
-                                .decorations(true)
-                                .build()
-                                .unwrap();
-                            }
-                        }
-                        "退出" => {
-                            app.exit(0);
-                        }
-                        _ => {}
-                    }
-                }
-                _ => {}
-            }
-        })
         .invoke_handler(tauri::generate_handler![
             write_data_file,
             read_data_file,
