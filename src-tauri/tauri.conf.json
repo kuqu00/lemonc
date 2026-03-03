@@ -7,34 +7,76 @@
     "frontendDist": "../dist",
     "devUrl": "http://localhost:8093"
   },
-  "app": {
-    "windows": [
-      {
-        "title": "lemonC 办公系统",
-        "label": "main",
-        "width": 1440,
-        "height": 900,
-        "minWidth": 1024,
-        "minHeight": 768,
-        "resizable": true,
-        "fullscreen": false,
-        "center": true,
-        "transparent": false,
-        "decorations": true,
-        "hiddenTitle": false,
-        "alwaysOnTop": false,
-        "skipTaskbar": false
-      }
-    ],
-    "security": {
-      "csp": "default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' blob:; media-src 'self' blob:;",
-      "assetProtocol": {
-        "enable": true,
-        "scope": ["**"]
-      }
+"app": {
+      "windows": [
+        {
+          "title": "lemonC 办公系统",
+          "label": "main",
+          "width": 1440,
+          "height": 900,
+          "minWidth": 1024,
+          "minHeight": 768,
+          "resizable": true,
+          "fullscreen": false,
+          "center": true,
+          "transparent": false,
+          "decorations": true,
+          "hiddenTitle": false,
+          "alwaysOnTop": false,
+          "skipTaskbar": false
+        }
+      ],
+      "security": {
+        "csp": "default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' blob:; media-src 'self' blob:;",
+        "assetProtocol": {
+          "enable": true,
+          "scope": ["**"]
+        }
+      },
+      "withGlobalTauri": true
     },
-    "withGlobalTauri": true
-  },
+    "tauri": {
+      "allowlist": {
+        "shell": {
+          "scope": ["open"]
+        }
+      },
+      "bundle": {
+        "externalBin": [],
+        "active": true,
+        "targets": "all",
+        "icon": [
+          "icons/32x32.png",
+          "icons/128x128.png",
+          "icons/icon.ico"
+        ],
+        "category": "Business",
+        "shortDescription": "LemonC办公系统",
+        "longDescription": "LemonC办公系统 - 一款专为银行信贷场景设计的纯离线本地办公系统，支持客户管理、待办事项、数据分析等功能",
+        "copyright": "Copyright © 2026 lemonC",
+        "publisher": "lemonC",
+        "windowsInstaller": {
+          "enable": true,
+          "installerIcon": "icons/icon.ico",
+          "installerIconSize": 64,
+          "installerIconBgColor": "#FFFFFF",
+          "elevate": true,
+          "elevateIcon": true,
+          "runAfterInstall": true,
+          "installerName": "LemonC_{{version}}",
+          "installerHeaderIcon": "icons/icon.ico",
+          "installerHeaderBgColor": "#FFFFFF",
+          "licenseFile": "LICENSE",
+          "readmeFile": "README.md"
+        }
+      },
+      "windows": {
+        "embeddedBrowser": {
+          "active": true,
+          "downloadUrl": "https://github.com/kuqu00/lemonc/releases/download/webview2-runtime/webview2-runtime.zip"
+        }
+      }
+    }
   "bundle": {
     "active": true,
     "targets": "all",
