@@ -39,6 +39,14 @@
       "allowlist": {
         "shell": {
           "scope": ["open"]
+        },
+        "notification": {
+          "all": true,
+          "iconPath": "icons/icon.ico"
+        },
+        "system-tray": {
+          "all": true,
+          "iconPath": "icons/icon.ico"
         }
       },
       "bundle": {
@@ -69,6 +77,10 @@
           "licenseFile": "LICENSE",
           "readmeFile": "README.md"
         }
+      },
+      "systemTray": {
+        "iconPath": "icons/icon.ico",
+        "menuOnLeftClick": true
       },
       "windows": {
         "embeddedBrowser": {
